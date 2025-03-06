@@ -6,6 +6,7 @@ use App\Models\BloodPressure;
 use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -31,13 +32,13 @@ class BloodPressureList extends Component
 
         //Cargar gráfico
         $this->dispatch('loadChart', [
-            'labels' => $pressureHistory['registros']->pluck('measured_at')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d/m')),
-            'systolic' => $pressureHistory['registros']->pluck('systolic'),
-            'diastolic' => $pressureHistory['registros']->pluck('diastolic')
+            'labels' => $pressureHistory['registrosChart']->pluck('measured_at')->map(fn($date) => \Carbon\Carbon::parse($date)->format('d/m/Y')),
+            'systolic' => $pressureHistory['registrosChart']->pluck('systolic'),
+            'diastolic' => $pressureHistory['registrosChart']->pluck('diastolic')
         ]);
 
         return view('livewire.blood-pressure-list', [
-            'registros' => $pressureHistory['registros'],
+            'registros' => $pressureHistory['registrosAgrupados'],
             'stats' => $pressureHistory['stats']
         ]);
     }
@@ -54,20 +55,49 @@ class BloodPressureList extends Component
 
             $query->whereBetween('measured_at', [$start, $end]);
         }
-        //Obtener registros paginados
-        $bloodPressures = $query->orderBy('measured_at', 'desc')->paginate(31);
 
+        //Obtener registros 
+        $registros = $query->orderBy('measured_at', 'desc')->get();
+
+        //Agrupar registros por el día
+        $registrosAgrupados = $registros->groupBy(function ($registro) {
+            return Carbon::parse($registro->measured_at)->format('d-m-Y');
+        });
+
+        // Paginar los grupos
+        $page = $this->getPage();
+        $perPage = 31; // Días por página
+        $paginados = $registrosAgrupados->forPage($page, $perPage);
+
+        // Crear un objeto LengthAwarePaginator
+        $paginator = new LengthAwarePaginator(
+            $paginados, // Los grupos de registros por fecha
+            $registrosAgrupados->count(), // El número total de días
+            $perPage, // Registros por página
+            $page, // La página actual
+            ['path' => url()->current()] // Mantener la URL actual
+        );
+
+        // Obtener el valor más alto de 'systolic' por cada grupo (día). Esto será utilizado para mostrarse en el grafico
+        $resultadosMaximos = $paginados->map(function ($grupo) {
+            // Obtenemos el registro con el valor máximo de 'systolic' dentro de cada grupo
+            $maxSystolic = $grupo->max('systolic'); // 'systolic' es el campo que buscas
+            // Devolver el grupo con solo el valor máximo de 'systolic'
+            return $grupo->where('systolic', $maxSystolic)->first();
+        });
 
         //Estadísticas básicas        
         $stats = [
-            'avg_systolic' => round($bloodPressures->avg('systolic'), 1),
-            'avg_diastolic' => round($bloodPressures->avg('diastolic'), 1),
-            'avg_pulse' => round($bloodPressures->avg('pulse'), 1),
+            'avg_systolic' => round($registros->avg('systolic'), 1),
+            'avg_diastolic' => round($registros->avg('diastolic'), 1),
+            'avg_pulse' => round($registros->avg('pulse'), 1),
         ];
 
         return [
-            'registros' => $bloodPressures,
-            'stats' => $stats
+            'registros' => $registros, //Registros sin agrupar. Usado para generar el PDF
+            'registrosAgrupados' => $paginator, //Registros agrupados y paginados para mostrar en la vista
+            'registrosChart' => $resultadosMaximos, //Registros para mostrar en el gráfico
+            'stats' => $stats //Estadísticas generales
         ];
     }
 
