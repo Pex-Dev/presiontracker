@@ -30,3 +30,45 @@ PresiónTracker es una aplicación web diseñada para registrar y monitorear la 
 - [Tailwind CSS](https://tailwindcss.com/) Framework de CSS utilizado para diseñar una interfaz limpia, moderna y completamente responsiva. Tailwind CSS facilita la personalización de estilos sin tener que escribir una gran cantidad de CSS personalizado.
 
 - [Chart Js](https://www.chartjs.org/): Librería JavaScript utilizada para crear gráficos interactivos y visualizaciones de datos. En este proyecto, Chart.js se utilizó para mostrar de manera visual las tendencias de la presión arterial, ayudando a los usuarios a identificar rápidamente picos o caídas en su salud.
+
+## Requisitos
+
+- Docker instalado
+- En Windows, es recomendable usar WSL 2 para ejecutar Docker y Sail correctamente.
+- Composer instalado (solo se necesita para ejecutar composer install una vez al comienzo)
+
+## Instalación
+
+**Clonar el repositorio:**
+```bash
+git clone https://github.com/Pex-Dev/presiontracker.git
+cd presiontracker
+```
+**Copiar archivo env**
+```bash
+cp .env.example .env
+```
+**Editar archivo .env**
+
+    Abre .env y ajusta estas variables según tu entorno local
+
+**Instalar dependencias de php**
+```bash
+composer install
+```
+**Levantar los contenedores Docker con Sail**
+```bash
+./vendor/bin/sail up -d
+```
+**Ejecutar migraciones y seeders**
+```bash
+./vendor/bin/sail artisan migrate --seed
+```
+**Instalar dependencias de Node.js**
+```bash
+./vendor/bin/sail npm install
+```
+**Compilar assets (JS, CSS, etc)**
+```bash
+./vendor/bin/sail npm run dev
+```
