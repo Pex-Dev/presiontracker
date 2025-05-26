@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,8 +49,11 @@ class AuthenticatedSessionController extends Controller
     //Iniciar sesión como invitado
     public function guest(): RedirectResponse
     {
-        //Iniciar sesión como invitado usando el id del user Invitado
-        Auth::loginUsingId(4);
+        //Iniciar sesión como invitado usando el email
+        $guest = User::where('email', 'invitado@guest.com')->first();
+        if ($guest) {
+            Auth::login($guest);
+        }
 
         return redirect()->intended(route('blood-pressure.index', absolute: false));
     }
