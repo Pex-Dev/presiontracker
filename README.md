@@ -11,7 +11,7 @@ PresiónTracker es una aplicación web diseñada para registrar y monitorear la 
 ### Características:
 
 
-- Registro de presión sistólica y diastólica con fecha..
+- Registro de presión sistólica y diastólica con fecha.
 - Campos opcionales para pulso, temperatura y notas adicionales.
 - Filtros por rango de fechas para un análisis detallado.
 - Cálculo automático del promedio de presión en un período seleccionado.
@@ -60,6 +60,11 @@ composer install
 ```bash
 ./vendor/bin/sail up -d
 ```
+**Generar la clave de la aplicación para que laravel funcione correctamente**
+```bash
+./vendor/bin/sail artisan key:generate
+```
+
 **Ejecutar migraciones y seeders**
 ```bash
 ./vendor/bin/sail artisan migrate --seed
