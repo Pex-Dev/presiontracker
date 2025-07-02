@@ -4,7 +4,14 @@
     </a>
 </div>
 
-# Sobre PresiónTracker
+- [Español](#Español)
+
+- [English](#english)
+
+
+## Español
+---
+
 
 PresiónTracker es una aplicación web diseñada para registrar y monitorear la presión arterial de manera sencilla y organizada. Permite ingresar datos diarios, generar reportes y visualizar tendencias con gráficos, facilitando el control de la salud en cualquier momento y desde cualquier dispositivo.
 
@@ -77,3 +84,81 @@ composer install
 ```bash
 ./vendor/bin/sail npm run dev
 ```
+
+
+## English
+---
+
+**PresiónTracker** is a web application designed to register and monitor blood pressure in an easy and organized way.  
+It allows users to enter daily data, generate reports, and visualize trends through charts — making health tracking accessible anytime, from any device.
+
+### Features:
+- Record systolic and diastolic pressure with date.
+- Optional fields for pulse, temperature, and additional notes.
+- Filter by date range for detailed analysis.
+- Automatic calculation of average blood pressure in the selected period.
+- Interactive charts to easily visualize trends.
+
+## Technologies used:
+
+- [Laravel](https://laravel.com/): PHP framework used for full backend and frontend development. Handles business logic, routing, database access, and more.
+
+- [Livewire](https://laravel-livewire.com/): Enables dynamic, reactive interfaces without writing custom JavaScript. Used for real-time interaction with the app.
+
+- [Dompdf](https://github.com/dompdf/dompdf): PHP library to generate PDF files from HTML content. Allows users to export their pressure history for easy sharing or record keeping.
+
+- [Livewire Alert](https://github.com/jantinnerezo/livewire-alert): Package for displaying success, error, and warning alerts in real time with Livewire.
+
+- [Tailwind CSS](https://tailwindcss.com/): Utility-first CSS framework used to design a clean, modern, and fully responsive UI.
+
+- [Chart.js](https://www.chartjs.org/): JavaScript library used for creating dynamic data visualizations and charts.
+
+## Requirements
+
+- Docker installed  
+- On Windows, WSL 2 is recommended to run Docker and Sail correctly  
+- Composer installed (only needed once to run `composer install`)
+
+## Installation
+
+**Clone the repository:**
+```bash
+git clone https://github.com/Pex-Dev/presiontracker.git
+cd presiontracker
+```
+**Copy .env file**
+```bash
+cp .env.example .env
+```
+**Edit the .env file**
+
+Update environment variables according to your local setup
+
+**Install PHP dependencies**
+```bash
+composer install
+```
+**Start Docker containers with Sail**
+```bash
+./vendor/bin/sail up -d
+```
+**Generate the application key**
+```bash
+./vendor/bin/sail artisan key:generate
+```
+
+**Run migrations and seeders**
+```bash
+./vendor/bin/sail artisan migrate --seed
+```
+**Install Node.js dependencies**
+```bash
+./vendor/bin/sail npm install
+```
+**Compile assets (JS, CSS, etc.)**
+```bash
+./vendor/bin/sail npm run dev
+```
+
+
+
